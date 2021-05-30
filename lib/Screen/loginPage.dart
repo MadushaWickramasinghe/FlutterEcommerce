@@ -1,3 +1,4 @@
+import 'package:ecommerce/Screen/registerPage.dart';
 import 'package:ecommerce/widget/customInput.dart';
 import 'package:ecommerce/widget/custom_btn.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               GestureDetector(
                 onTap: (){
 
-                 Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
 
                 },
                 child: Padding(
