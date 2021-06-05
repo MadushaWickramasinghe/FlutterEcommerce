@@ -2,54 +2,61 @@ import 'package:ecommerce/constant.dart';
 import 'package:flutter/material.dart';
 
 class CustomBtn extends StatelessWidget {
-  final String btntext;
+  final String text;
   final Function onPressed;
   final bool outlineBtn;
   final bool isLoading;
-
-  CustomBtn({this.outlineBtn,this.onPressed,this.btntext,this.isLoading});
+  CustomBtn({this.text, this.onPressed, this.outlineBtn, this.isLoading});
 
   @override
   Widget build(BuildContext context) {
-
     bool _outlineBtn = outlineBtn ?? false;
     bool _isLoading = isLoading ?? false;
 
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 50.0,
-        width: MediaQuery.of(context).size.width,
+        height: 65.0,
         decoration: BoxDecoration(
-          color: _outlineBtn ? Colors.transparent: Colors.white ,
+          color: _outlineBtn ? Colors.transparent : Colors.black,
           border: Border.all(
-            color: Colors.white,
+            color: Colors.black,
+            width: 2.0,
           ),
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(
+            12.0,
+          ),
         ),
-        margin: EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-
+        margin: EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 8.0,
+        ),
         child: Stack(
-         children: [
-           Visibility(
-             visible: _isLoading ? false : true,
-             child: Center(
-               child: Text( btntext ?? "Text",
-                    style: TextStyle(fontSize: 16.0,color: Colors.white,fontWeight: FontWeight.bold),
-               ),
-             ),
-           ),
-           Visibility(
-             visible:_isLoading ,
-             child: Center(
-               child: SizedBox(
-                 height: 30.0,
-                 width: 30.0,
-                 child: CircularProgressIndicator(),
-               ),
-             ),
-           ),
-         ],
+          children: [
+            Visibility(
+              visible: _isLoading ? false : true,
+              child: Center(
+                child: Text(
+                  text ?? "Text",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: _outlineBtn ? Colors.black : Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            Visibility(
+              visible: _isLoading,
+              child: Center(
+                child: SizedBox(
+                  height: 30.0,
+                  width: 30.0,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

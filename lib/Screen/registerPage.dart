@@ -1,3 +1,4 @@
+import 'package:ecommerce/Screen/homePage.dart';
 import 'package:ecommerce/Screen/loginPage.dart';
 import 'package:ecommerce/constant.dart';
 import 'package:ecommerce/widget/customInput.dart';
@@ -12,11 +13,12 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
 
-  Future<void> _alertDialog( String error) async{
+  // Build an alert dialog to display some errors.
+  Future<void> _alertDialogBuilder(String error) async {
     return showDialog(
-      barrierDismissible: false,
         context: context,
-        builder: (context){
+        barrierDismissible: false,
+        builder: (context) {
           return AlertDialog(
             title: Text("Error"),
             content: Container(
@@ -24,64 +26,66 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             actions: [
               FlatButton(
-                child: Text("Close"),
-                onPressed: (){
+                child: Text("Close Dialog"),
+                onPressed: () {
                   Navigator.pop(context);
                 },
               )
             ],
           );
         }
-        );
+    );
   }
 
-  //create new acc
-
-  Future<String> _createNewAccount() async{
-    try{
+  // Create a new user account
+  Future<String> _createAccount() async {
+    try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email:_registerEmail,
-          password: _registerPassword,
-      );
+          email: _registerEmail, password: _registerPassword);
       return null;
-    } on FirebaseAuthException catch (e){
-      if(e.code == 'Weak Password'){
-        return 'Password is weak';
-      }else if (e.code == 'email already in use'){
-        return 'account already use';
+    } on FirebaseAuthException catch(e) {
+      if (e.code == 'weak-password') {
+        return 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        return 'The account already exists for that email.';
       }
       return e.message;
-
-    }catch(e){
-     return e.toString();
-
+    } catch (e) {
+      return e.toString();
     }
   }
 
-  void _submitForm() async{
-
+  void _submitForm() async {
+    // Set the form to loading state
     setState(() {
       _registerFormLoading = true;
     });
 
-    String _createAccountFeedback = await  _createNewAccount();
+    // Run the create account method
+    String _createAccountFeedback = await _createAccount();
 
-    if(_createAccountFeedback != null){
-      _alertDialog(_createAccountFeedback);
+    // If the string is not null, we got error while create account.
+    if(_createAccountFeedback != null) {
+      _alertDialogBuilder(_createAccountFeedback);
 
+      // Set the form to regular state [not loading].
       setState(() {
         _registerFormLoading = false;
       });
     } else {
+      // The String was null, user is logged in.
       Navigator.pop(context);
     }
   }
 
+  // Default Form Loading State
   bool _registerFormLoading = false;
 
+  // Form Input Field Values
   String _registerEmail = "";
   String _registerPassword = "";
 
+  // Focus Node for input fields
   FocusNode _passwordFocusNode;
 
   @override
@@ -92,87 +96,77 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-  _passwordFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.orangeAccent,
-        body: SafeArea(
-          child: Container(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children:<Widget> [
-                Container(
-                    padding: EdgeInsets.only(top: 80.0),
-                    child: Text("Create A New Acoount",textAlign: TextAlign.center,style: Constants.boldheading,)
-                ),//welcome signin
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children:[
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 30.0),
-                          child: Text("Email or Username",style: Constants.textfield,),
-                        ),
-                    ),
-                    CustomInput(
-                      onChanged:(value){
-                        _registerEmail = value;
-                      },
-                      onSubmited: (value){
-                        _passwordFocusNode.requestFocus();
-                      },
-                      textInputAction:TextInputAction.next ,
-                    ),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 30.0),
-                          child: Text("Password",style: Constants.textfield,),
-                        )),
-                    CustomInput(
-                      onChanged: (value){
-                        _registerPassword = value;
-                      },
-                      focusNode: _passwordFocusNode,
-                      isPasswordField: true,
-                      onSubmited:(value){
-                        _submitForm();
-                      },
-                    ),
-                    CustomBtn(
-                      outlineBtn: true,
-                      btntext: "Create",
-                      onPressed:(){
-                       _submitForm();
-                      },
-                      isLoading: _registerFormLoading,
-
-
-                    ),
-                  ],
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.only(
+                  top: 24.0,
                 ),
-                GestureDetector(
-                  onTap: (){
-
-                   Navigator.pop(context);
-
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: Text("You Don't have Account Yet ?",style: TextStyle(color: Colors.white),),
+                child: Text(
+                  "Create A New Account",
+                  textAlign: TextAlign.center,
+                  style: Constants.boldHeading,
+                ),
+              ),
+              Column(
+                children: [
+                  CustomInput(
+                    hintText: "Email...",
+                    onChanged: (value) {
+                      _registerEmail = value;
+                    },
+                    onSubmitted: (value) {
+                      _passwordFocusNode.requestFocus();
+                    },
+                    textInputAction: TextInputAction.next,
                   ),
-                )
-              ],
-            ),
+                  CustomInput(
+                    hintText: "Password...",
+                    onChanged: (value) {
+                      _registerPassword = value;
+                    },
+                    focusNode: _passwordFocusNode,
+                    isPasswordField: true,
+                    onSubmitted: (value) {
+                      _submitForm();
+                    },
+                  ),
+                  CustomBtn(
+                    text: "Create New Account",
+                    onPressed: () {
+                      _submitForm();
+                    },
+                    isLoading: _registerFormLoading,
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 16.0,
+                ),
+                child: CustomBtn(
+                  text: "Back To Login",
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  outlineBtn: true,
+                ),
+              ),
+            ],
           ),
-        )
+        ),
+      ),
     );
   }
 }
