@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.orangeAccent,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: LoginPage(),
 
     );
   }
